@@ -23,12 +23,13 @@ let apiKey = "";
 let selectColor = "rgba(255, 0, 0, 0.3)";
 let followingThink = true;
 let followingThinkInterval = 3000;
+let cachedState = {}; // 存储编辑器状态
 
 let decorationType = vscode.window.createTextEditorDecorationType({
   backgroundColor: 'rgba(255, 0, 0, 0.3)'  // 红色背景，透明度 30%
 });
 
-function activate(context) {
+async function activate(context) {
   activeEditor = vscode.window.activeTextEditor;
   activeContext = context;
   const document = activeEditor.document;
@@ -89,30 +90,60 @@ function activate(context) {
         if (followingThink)
         {
           if (left_selector.isEqual(right_selector)) 
-            {
-              clearTimeout(typingTimer);
-              viewProviderInstance.hideThinking();
-              return;
-            }
-            const selectedText = getSelectedText();
-            if (String(selectedText) === "\r\n" || String(selectedText) === "\n")
-            {
-              left_selector = new vscode.Position(right_selector.line, right_selector.character);
-              activeEditor.setDecorations(decorationType, [new vscode.Range(left_selector, right_selector)]);
-              clearTimeout(typingTimer);
-              return;
-            }
+          {
             clearTimeout(typingTimer);
-            typingTimer = setTimeout(() => {
-              triggerTextModification(selectedText);
-            }, followingThinkInterval);
-            viewProviderInstance.showThinking();
+            viewProviderInstance.hideThinking();
+            return;
+          }
+          const selectedText = getSelectedText();
+          if (String(selectedText) === "\r\n" || String(selectedText) === "\n")
+          {
+            left_selector = new vscode.Position(right_selector.line, right_selector.character);
+            activeEditor.setDecorations(decorationType, [new vscode.Range(left_selector, right_selector)]);
+            clearTimeout(typingTimer);
+            return;
+          }
+          clearTimeout(typingTimer);
+          typingTimer = setTimeout(() => {
+            triggerTextModification(selectedText);
+          }, followingThinkInterval);
+          viewProviderInstance.showThinking();
         }
         
       }
     }
   }, null, context.subscriptions);
-
+  vscode.window.onDidChangeActiveTextEditor(editor => {
+    if (activeEditor && activeEditor.document !== editor.document) {
+      cachedState[activeEditor.document.uri.toString()] = {
+        left_selector: left_selector,
+        right_selector: right_selector,
+        modifiedText: modifiedText,
+        switchToChangeSeletorMode: switchToChangeSeletorMode,
+        selectorMode: selectorMode
+      }
+      activeEditor = editor;
+      if(cachedState[activeEditor.document.uri.toString()]){
+        left_selector = cachedState[activeEditor.document.uri.toString()].left_selector;
+        right_selector = cachedState[activeEditor.document.uri.toString()].right_selector;
+        modifiedText = cachedState[activeEditor.document.uri.toString()].modifiedText;
+        switchToChangeSeletorMode = cachedState[activeEditor.document.uri.toString()].switchToChangeSeletorMode;
+        selectorMode = cachedState[activeEditor.document.uri.toString()].selectorMode;
+        activeEditor.setDecorations(decorationType, [new vscode.Range(left_selector, right_selector)]);
+        viewProviderInstance.update(modifiedText);
+      }
+      else{
+        const document = activeEditor.document;
+        const lastLine = document.lineCount - 1;
+        const lastLineLength = document.lineAt(lastLine).text.length;
+        left_selector = new vscode.Position(lastLine, lastLineLength);
+        right_selector = new vscode.Position(lastLine, lastLineLength);
+        switchToChangeSeletorMode = false;
+        selectorMode = 0;
+        activeEditor.setDecorations(decorationType, [new vscode.Range(left_selector, right_selector)]);
+      }
+    }
+  });
   // 注册命令
   context.subscriptions.push(vscode.commands.registerCommand('novel-style-revision.handleTab', () => {
 
@@ -334,10 +365,45 @@ class NovelStyleRevisionViewProvider {
     };
     const imagePath = webviewView.webview.asWebviewUri(vscode.Uri.file(path.join(__dirname, 'resources', 'title.png')));
     webviewView.webview.html = this.getWebviewContent(imagePath);
-
-    webviewView.webview.onDidReceiveMessage(message => {
-      if (message.command === 'apply') {
+    webviewView.webview.onDidReceiveMessage(async (message) => {
+      if(message.command === 'apply') {
         applyModifiedText();
+      }
+      if(message.command === "applySettings"){
+        writingStyle = message.data.style;
+        language = message.data.language;
+        baseURL = message.data.baseURL;
+        apiKey = message.data.apiKey;
+        selectColor = message.data.selectColor;
+        followingThink = message.data.followingThink;
+        followingThinkInterval = message.data.followingThinkInterval;
+        let backgroundColor;
+        decorationType.dispose();
+        if (selectColor !== "")
+        {
+          backgroundColor = selectColor
+        }
+        else
+        {
+          backgroundColor = 'rgba(255, 0, 0, 0.3)'
+        }
+        decorationType = vscode.window.createTextEditorDecorationType({
+          backgroundColor: backgroundColor
+        });
+        inThinking = false;
+        
+        activeEditor.setDecorations(decorationType, [new vscode.Range(left_selector, right_selector)]);
+        config.update('style', writingStyle, true);
+        config.update('language', language, true);
+        config.update('baseURL', baseURL, true);
+        config.update('apiKey', apiKey, true);
+        config.update('selectColor', selectColor, true);
+        config.update('followingThink', followingThink, true);
+        config.update('followingThinkInterval', followingThinkInterval, true);
+        vscode.window.showInformationMessage("Settings applied successfully");
+      }
+      if(message.command === "ready"){
+        NovelStyleRevisionViewProvider.currentPanel.webview.postMessage({applySettings: "true", style: writingStyle, language: language, baseURL: baseURL, apiKey: apiKey, selectColor: selectColor, followingThink: followingThink, followingThinkInterval: followingThinkInterval});
       }
     });
   }
@@ -368,6 +434,7 @@ class NovelStyleRevisionViewProvider {
 
     return htmlContent;
   }
+  
 }
 
 async function applyModifiedText() {

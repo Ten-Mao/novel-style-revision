@@ -29,7 +29,7 @@ This extension contributes the following settings:
 * "novel-style-revision.style": Set your target writing style. Default : "村上春树".
 * "novel-style-revision.language": Set your writing language. Default: "简体中文".
 * "novel-style-revision.selectColor": Set the color of the background of the selected text. Default: "rgba(255, 0, 0, 0.3)".
-* "novel-style-revision.followingThink": Open the following think. if True, LLM will auto think after several seconds you stop typing. Default: true.
+* "novel-style-revision.followingThink": Open the following think. if true, LLM will auto think after several seconds you stop typing. Default: true.
 * "novel-style-revision.followingThinkInterval": Only valid when followingThink is True. And it means the milliseconds of the interval of auto thinking. Default: 3000.
 * "novel-style-revision.baseURL": Set the base URL of your LLM API. Default: "https://open.bigmodel.cn/api/paas/v4/chat/completions".
 * "novel-style-revision.apiKey": Set the API key of your LLM API.
@@ -37,6 +37,9 @@ This extension contributes the following settings:
 ## Release Notes
 
 ### 1.0.0
+* Initial release of novel-style-revision
 
-Initial release of novel-style-revision
+### 1.0.1
+* Optimize the GUI of the plugin.
+* Support multi-document autocomplete state caching.
 

@@ -4,14 +4,16 @@
   "publisher": "tenmao",
   "icon": "resources/icon.png",
   "description": "novel-style-revision is a VSCode plugin designed to enhance your writing style in real time. With its unique dual-cursor feature, you can write seamlessly: the end cursor follows your input while the starting cursor remains fixed. Once you stop typing, the plugin automatically sends the selected text to an intelligent language model (LLM), which refines the style and language, and displays the revised text. Effortlessly improve your writing quality, making your expression smoother and more precise. Writing has never been more efficient and enjoyable!",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.95.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onView:novel-style-revision.view"
+  ],
   "main": "./extension.js",
   "contributes": {
     "viewsContainers": {
@@ -101,7 +103,7 @@
         "novel-style-revision.followingThink": {
           "type": "bool",
           "default": true,
-          "description": "if open the following think. if True, LLM will auto think after several seconds you stop typing"
+          "description": "if open the following think. if true, LLM will auto think after several seconds you stop typing"
         },
         "novel-style-revision.followingThinkInterval": {
           "type": "number",
