@@ -1,0 +1,140 @@
+{
+  "name": "novel-style-revision",
+  "displayName": "Novel style revision",
+  "publisher": "tenmao",
+  "icon": "resources/icon.png",
+  "description": "novel-style-revision is a VSCode plugin designed to enhance your writing style in real time. With its unique dual-cursor feature, you can write seamlessly: the end cursor follows your input while the starting cursor remains fixed. Once you stop typing, the plugin automatically sends the selected text to an intelligent language model (LLM), which refines the style and language, and displays the revised text. Effortlessly improve your writing quality, making your expression smoother and more precise. Writing has never been more efficient and enjoyable!",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "novel-style-revision",
+          "title": "Novel Style Revision",
+          "icon": "resources/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "novel-style-revision": [
+        {
+          "type": "webview",
+          "id": "novel-style-revision.view",
+          "name": "Modified Text Preview"
+        }
+      ]
+    },
+    "commands": [],
+    "keybindings": [
+      {
+        "command": "novel-style-revision.handleTab",
+        "key": "tab",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "novel-style-revision.handleSpace",
+        "key": "space",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "novel-style-revision.handleCtrlAndQuotation",
+        "key": "ctrl+'",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "novel-style-revision.handleCtrlAndTab",
+        "key": "ctrl+tab",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "novel-style-revision.handleEsc",
+        "key": "escape",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "novel-style-revision.handleLeft",
+        "key": "left",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "novel-style-revision.handleRight",
+        "key": "right",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "novel-style-revision.handleUp",
+        "key": "up",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "novel-style-revision.handleDown",
+        "key": "down",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "novel-style-revision.style": {
+          "type": "string",
+          "default": "村上春树",
+          "description": "Your target writing style"
+        },
+        "novel-style-revision.language": {
+          "type": "string",
+          "default": "简体中文",
+          "description": "Your writing language"
+        },
+        "novel-style-revision.selectColor": {
+          "type": "string",
+          "default": "rgba(255, 0, 0, 0.3)",
+          "description": "The color of the background of the selected text"
+        },
+        "novel-style-revision.followingThink": {
+          "type": "bool",
+          "default": true,
+          "description": "if open the following think. if True, LLM will auto think after several seconds you stop typing"
+        },
+        "novel-style-revision.followingThinkInterval": {
+          "type": "number",
+          "default": 3000,
+          "description": "Only valid when followingThink is True. And it means the milliseconds of the interval of auto thinking"
+        },
+        "novel-style-revision.baseURL": {
+          "type": "string",
+          "default": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+          "description": "The base URL of the LLM API"
+        },
+        "novel-style-revision.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "The API key of the LLM API"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.9",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.95.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.13.0"
+  },
+  "dependencies": {
+    "axios": "^1.7.7"
+  }
+}

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modified Text Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik:wght@500&display=swap" rel="stylesheet">
+  <style>
+    /* 全局样式重置 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Rubik', sans-serif;
+      background: linear-gradient(135deg, #000428, #004e92); /* 星空背景渐变 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+      color: #fff; /* 白色文字 */
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 繁星点缀效果 */
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background-color: #fff;
+      border-radius: 50%;
+      animation: twinkle 1.5s infinite alternate;
+      opacity: 0;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    /* 为星星生成动画 */
+    .star:nth-child(odd) {
+      animation-duration: 1.8s;
+    }
+
+    .star:nth-child(even) {
+      animation-duration: 2.2s;
+    }
+
+    /* 容器样式 */
+    .container {
+      background: linear-gradient(135deg, #000000, #c0c0c0); /* 纯黑到银灰渐变 */
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      padding: 30px;
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s ease;
+      z-index: 10; /* 确保容器在星空背景之上 */
+    }
+
+    .container:hover {
+      transform: translateY(-10px); /* 鼠标悬停时的动态效果 */
+    }
+
+    /* 图片样式 */
+    .title-image {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .title-image:hover {
+      transform: scale(1.05); /* 鼠标悬停时的动态效果 */
+    }
+
+    .modified-text {
+      background: linear-gradient(135deg, #313030, #686868); /* 深到浅的渐变 */
+      color: #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 1rem;
+      line-height: 1.5;
+      border: 1px solid #444;
+      width: 100%;
+      max-height: 300px;
+      overflow-y: auto;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* 禁用按钮的样式 */
+    .apply-button:disabled {
+      background: linear-gradient(135deg, #b0bec5, #cfd8dc); /* 灰色渐变 */
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.5;
+    }
+
+    /* 激活按钮的样式 */
+    .apply-button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #5c6bc0, #3f4c89); /* 渐变背景 */
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: bold;
+      transition: background-color 0.3s, transform 0.2s;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* 按钮阴影 */
+    }
+
+    .apply-button:hover {
+      background: linear-gradient(135deg, #3f4c89, #5c6bc0); /* 反向渐变 */
+      transform: scale(1.1);  
+    }
+    .apply-button:disabled:hover {
+      background: linear-gradient(135deg, #b0bec5, #cfd8dc); /* 禁用时禁止悬停背景色变化 */
+      transform: none; /* 禁用时禁止缩放效果 */
+    }
+
+    .apply-button:focus {
+      outline: none;
+    }
+
+    .thinking {
+      font-size: 16px;
+      color: #165f73;
+      margin-top: 20px;
+      display: none;
+      position: relative;
+      text-align: center;
+    }
+
+    /* 加载动画 */
+    .thinking .spinner {
+      border: 3px solid #f3f3f3; /* 背景颜色 */
+      border-top: 3px solid #165f73; /* 旋转部分颜色 */
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* 为加载动画添加阴影 */
+    }
+
+    /* 旋转动画 */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      .modified-text {
+        padding: 15px;
+        max-height: 250px;
+      }
+
+      .apply-button {
+        padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 繁星点缀 -->
+  <div class="stars">
+    <!-- 增加更多的星星，并随机分布 -->
+    <div class="star" style="top: 5%; left: 15%;"></div>
+    <div class="star" style="top: 10%; left: 80%;"></div>
+    <div class="star" style="top: 20%; left: 60%;"></div>
+    <div class="star" style="top: 25%; left: 30%;"></div>
+    <div class="star" style="top: 40%; left: 70%;"></div>
+    <div class="star" style="top: 50%; left: 10%;"></div>
+    <div class="star" style="top: 60%; left: 20%;"></div>
+    <div class="star" style="top: 70%; left: 85%;"></div>
+    <div class="star" style="top: 80%; left: 50%;"></div>
+    <div class="star" style="top: 90%; left: 40%;"></div>
+    <div class="star" style="top: 30%; left: 90%;"></div>
+    <div class="star" style="top: 55%; left: 75%;"></div>
+    <div class="star" style="top: 45%; left: 50%;"></div>
+    <div class="star" style="top: 15%; left: 25%;"></div>
+    <div class="star" style="top: 35%; left: 65%;"></div>
+    <div class="star" style="top: 65%; left: 80%;"></div>
+    <div class="star" style="top: 80%; left: 15%;"></div>
+    <div class="star" style="top: 10%; left: 50%;"></div>
+    <div class="star" style="top: 5%; left: 90%;"></div>
+    <div class="star" style="top: 95%; left: 30%;"></div>
+  </div>
+
+  <div class="container">
+    <img src="{{IMAGE_PATH}}" alt="Novel Style Revision" class="title-image">
+    <div id="modifiedText" class="modified-text"></div>
+    <button class="apply-button" id="applyButton" disabled title="请使用ctrl+tab发起一次生成请求,或者开启自动跟随生成选项获得生成文本">Apply Changes</button>
+    <div id="thinking" class="thinking">
+      <div class="spinner"></div>正在处理中，请稍候...
+    </div>
+  </div>
+
+  <script>
+    const vscode = acquireVsCodeApi();
+  
+    function applyText() {
+      vscode.postMessage({ command: 'apply' });
+    }
+  
+    window.addEventListener('message', event => {
+      const message = event.data;
+      const modifiedTextElement = document.getElementById('modifiedText');
+      const thinkingElement = document.getElementById('thinking');
+      const applyButton = document.querySelector('.apply-button');  // 获取按钮
+  
+      if (message.hideThinking) {
+        modifiedTextElement.innerText = '';
+        thinkingElement.style.display = 'none';
+        applyButton.style.display = 'block';  // 显示按钮
+        document.getElementById('applyButton').disabled = true;
+      }
+      if (message.modifiedText && message.modifiedText.length > 0) {
+        modifiedTextElement.innerText = message.modifiedText;
+        thinkingElement.style.display = 'none';
+        applyButton.style.display = 'block';  // 显示按钮
+        document.getElementById('applyButton').disabled = false;  // 激活按钮
+      } 
+      if(message.showThinking){
+        modifiedTextElement.innerText = '';
+        thinkingElement.style.display = 'block';  // 显示加载动画
+        applyButton.style.display = 'none';  // 隐藏按钮
+      }
+    });
+  </script>
+  
+</body>
+</html>
+
