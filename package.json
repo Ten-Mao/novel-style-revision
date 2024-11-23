@@ -123,6 +123,10 @@
       }
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ten-Mao/novel-style-revision/"
+  },
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",

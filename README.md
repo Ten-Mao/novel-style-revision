@@ -8,15 +8,15 @@ novel-style-revision is a VSCode plugin designed to enhance your writing style i
 
 ## Feature demonstration tutorial
 
-* In the followingThink(default) mode, the input text requiring a style change will be automatically highlighted. After 3 seconds of no input, the LLM will provide synonymous text in the target style, as configured in your settings, in the left sidebar. You can apply the suggested changes using the Tab shortcut key or by clicking the "Apply Changes" button in the sidebar.
+ In the followingThink(default) mode, the input text requiring a style change will be automatically highlighted. After 3 seconds of no input, the LLM will provide synonymous text in the target style, as configured in your settings, in the left sidebar. You can apply the suggested changes using the Tab shortcut key or by clicking the "Apply Changes" button in the sidebar.
 ![base function demonstration](.assert/baseFunc.gif)
-* If you prefer the LLM not to continuously provide suggestions and only generate alternative styles when needed, you can disable the "Enable Auto-Think" option in the settings and click the "Apply Settings" button. In this mode, you can manually trigger a suggestion by using the **Ctrl + Tab** shortcut.
+If you prefer the LLM not to continuously provide suggestions and only generate alternative styles when needed, you can disable the "Enable Auto-Think" option in the settings and click the "Apply Settings" button. In this mode, you can manually trigger a suggestion by using the **Ctrl + Tab** shortcut.
 ![cancel followThinking mode](.assert/cancelFollowingThinkingFunc.gif)
-* If you're not satisfied with the selected area, you can use the **Ctrl + '** shortcut to enter Selection Edit Mode. In this mode, you can adjust the boundaries of the selection using the **← → ↑ ↓** arrow keys. By default, the right boundary is controlled, but you can switch the boundary you want to adjust by pressing the **Space** key. To exit Selection Edit Mode, simply press the **Ctrl + '** shortcut again.
+If you're not satisfied with the selected area, you can use the **Ctrl + '** shortcut to enter Selection Edit Mode. In this mode, you can adjust the boundaries of the selection using the **← → ↑ ↓** arrow keys. By default, the right boundary is controlled, but you can switch the boundary you want to adjust by pressing the **Space** key. To exit Selection Edit Mode, simply press the **Ctrl + '** shortcut again.
 ![change into select mode](.assert/checkIntoSelectMode.gif)
-* If you want to quickly clear the current selection, you can use the **ESC** shortcut. This will reposition both the left and right boundaries of the selection to your cursor's current location.
+If you want to quickly clear the current selection, you can use the **ESC** shortcut. This will reposition both the left and right boundaries of the selection to your cursor's current location.
 ![remove select](.assert/removeSelect.gif)
-* Additionally, you can customize the selection color in the settings, as well as adjust the activation interval for LLM thinking in FollowThinking mode.
+Additionally, you can customize the selection color in the settings, as well as adjust the activation interval for LLM thinking in FollowThinking mode.
 
 ## Requirements & Installation
 
