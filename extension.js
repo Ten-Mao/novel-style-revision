@@ -32,8 +32,6 @@ let decorationType = vscode.window.createTextEditorDecorationType({
 async function activate(context) {
   activeEditor = vscode.window.activeTextEditor;
   activeContext = context;
-  const document = activeEditor.document;
-
   config = vscode.workspace.getConfiguration('novel-style-revision')
   writingStyle = config.get('style');
   language = config.get('language');
@@ -54,13 +52,16 @@ async function activate(context) {
       backgroundColor: 'rgba(255, 0, 0, 0.3)'  // 红色背景，透明度 30%
     });
   }
-
-
-  const lastLine = document.lineCount - 1;  // 最后一行的索引
-  const lastLineLength = document.lineAt(lastLine).text.length;  // 最后一行的长度
-  left_selector = new vscode.Position(lastLine, lastLineLength);
-  right_selector = new vscode.Position(lastLine, lastLineLength);
-  activeEditor.setDecorations(decorationType, [new vscode.Range(left_selector, right_selector)]);
+  if(activeEditor)
+  {
+    const document = activeEditor.document;
+    const lastLine = document.lineCount - 1;  // 最后一行的索引
+    const lastLineLength = document.lineAt(lastLine).text.length;  // 最后一行的长度
+    left_selector = new vscode.Position(lastLine, lastLineLength);
+    right_selector = new vscode.Position(lastLine, lastLineLength);
+    activeEditor.setDecorations(decorationType, [new vscode.Range(left_selector, right_selector)]);
+  }
+  
 
   vscode.workspace.onDidChangeTextDocument(event => {
     if (inThinking) {
@@ -142,6 +143,15 @@ async function activate(context) {
         selectorMode = 0;
         activeEditor.setDecorations(decorationType, [new vscode.Range(left_selector, right_selector)]);
       }
+    }
+    else if (!activeEditor){
+      activeEditor = editor;
+      const document = activeEditor.document;
+      const lastLine = document.lineCount - 1;  // 最后一行的索引
+      const lastLineLength = document.lineAt(lastLine).text.length;  // 最后一行的长度
+      left_selector = new vscode.Position(lastLine, lastLineLength);
+      right_selector = new vscode.Position(lastLine, lastLineLength);
+      activeEditor.setDecorations(decorationType, [new vscode.Range(left_selector, right_selector)]);
     }
   });
   // 注册命令
