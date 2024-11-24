@@ -78,7 +78,7 @@
     }
 
     .container {
-      margin-left: 90px; /* 调整容器的位置，避免被侧边栏遮挡 */
+      margin-left: 60px; /* 调整容器的位置，避免被侧边栏遮挡 */
       background: linear-gradient(135deg, #000000, #c0c0c0); /* 纯黑到银灰渐变 */
       border-radius: 12px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -90,6 +90,7 @@
       align-items: center;
       transition: transform 0.3s ease;
       z-index: 10; /* 确保容器在星空背景之上 */
+      transition: margin-left 0.3s ease; /* 动画时长为 0.3 秒，使用 ease 曲线 */
     }
     /* 设置界面 */
     .settings-content {
@@ -188,96 +189,98 @@
       margin: 0 auto 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-/* 整体设置容器 */
-.settings-container {
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #fff; /* 背景白色 */
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  max-width: 100%; /* 宽度自适应 */
-  width: 80%; /* 宽度为容器的80% */
-}
+    /* 整体设置容器 */
+    .settings-container {
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff; /* 背景白色 */
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 100%; /* 宽度自适应 */
+      width: 80%; /* 宽度为容器的80% */
+    }
+    .sidebar:hover ~ .container {
+      margin-left: 100px; /* 鼠标悬停时容器位置 */
+    }
+    /* 标题样式 */
+    .settings-title {
+      text-align: center;
+      color: #aeacac; /* 更深的黑色字体 */
+      font-size: 2rem; /* 增大字体 */
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
 
-/* 标题样式 */
-.settings-title {
-  text-align: center;
-  color: #aeacac; /* 更深的黑色字体 */
-  font-size: 2rem; /* 增大字体 */
-  font-weight: bold;
-  margin-bottom: 20px;
-}
+    /* 每一组设置项容器 */
+    .settings-group {
+      margin-left: -50px;
+      margin-bottom: 20px;
+      width: 120%;
+      display: flex;
+      align-items: center; /* 居中对齐 */
+      justify-content: flex-start; /* 左对齐 */
+    }
 
-/* 每一组设置项容器 */
-.settings-group {
-  margin-left: -50px;
-  margin-bottom: 20px;
-  width: 120%;
-  display: flex;
-  align-items: center; /* 居中对齐 */
-  justify-content: flex-start; /* 左对齐 */
-}
+    /* 标签样式 */
+    .settings-label {
+      font-size: 1.2rem; /* 稍微增大字体 */
+      color: #abaaaa; /* 深灰色 */
+      margin-right: 20px; /* 右侧间距 */
+      flex: 0 0 30%; /* 固定宽度 */
+      text-align: right; /* 右对齐 */
+    }
 
-/* 标签样式 */
-.settings-label {
-  font-size: 1.2rem; /* 稍微增大字体 */
-  color: #abaaaa; /* 深灰色 */
-  margin-right: 20px; /* 右侧间距 */
-  flex: 0 0 30%; /* 固定宽度 */
-  text-align: right; /* 右对齐 */
-}
+    /* 输入框样式 */
+    .settings-input {
+      width: 100%;
+      padding: 12px; /* 增加内边距 */
+      border: 1px solid #ccc; /* 浅灰色边框 */
+      border-radius: 8px;
+      font-size: 1.1rem; /* 增大字体 */
+      background-color: #f9f9f9; /* 淡灰色背景 */
+      color: #333;
+      transition: border-color 0.3s ease;
+      flex: 0 0 65%; /* 输入框占 65% 宽度 */
+    }
 
-/* 输入框样式 */
-.settings-input {
-  width: 100%;
-  padding: 12px; /* 增加内边距 */
-  border: 1px solid #ccc; /* 浅灰色边框 */
-  border-radius: 8px;
-  font-size: 1.1rem; /* 增大字体 */
-  background-color: #f9f9f9; /* 淡灰色背景 */
-  color: #333;
-  transition: border-color 0.3s ease;
-  flex: 0 0 65%; /* 输入框占 65% 宽度 */
-}
+    /* 输入框获得焦点时的效果 */
+    .settings-input:focus {
+      border-color: #444; /* 深灰色 */
+      outline: none;
+    }
 
-/* 输入框获得焦点时的效果 */
-.settings-input:focus {
-  border-color: #444; /* 深灰色 */
-  outline: none;
-}
+    /* 复选框样式 */
+    .settings-checkbox {
+      transform: scale(1.3); /* 增大复选框 */
+    }
 
-/* 复选框样式 */
-.settings-checkbox {
-  transform: scale(1.3); /* 增大复选框 */
-}
+    /* 按钮样式 */
+    .apply-button {
+      width: 100%;
+      padding: 14px 0; /* 增大按钮 */
+      background: #333; /* 深灰色背景 */
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2rem; /* 增大按钮文字 */
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-top: 20px;
+    }
 
-/* 按钮样式 */
-.apply-button {
-  width: 100%;
-  padding: 14px 0; /* 增大按钮 */
-  background: #333; /* 深灰色背景 */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.2rem; /* 增大按钮文字 */
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-top: 20px;
-}
+    /* 按钮悬停效果 */
+    .apply-button:hover {
+      background-color: #555; /* 中灰色 */
+      transform: scale(1.05);
+    }
 
-/* 按钮悬停效果 */
-.apply-button:hover {
-  background-color: #555; /* 中灰色 */
-  transform: scale(1.05);
-}
-
-/* 按钮焦点时的效果 */
-.apply-button:focus {
-  outline: none;
-}
+    /* 按钮焦点时的效果 */
+    .apply-button:focus {
+      outline: none;
+    }
 
 
 
@@ -321,7 +324,7 @@
     <div id="runContent" class="run-content">
       <img src="{{IMAGE_PATH}}" alt="Novel Style Revision" class="title-image">
       <div id="modifiedText" class="modified-text"></div>
-      <button class="apply-button" id="applyButton" disabled title="请使用ctrl+tab发起一次生成请求,或者开启自动跟随生成选项获得生成文本">Apply Changes</button>
+      <button class="apply-button" id="applyButton" disabled title="请使用ctrl+tab发起一次生成请求,或者开启自动跟随生成选项获得生成文本">应用思考</button>
       <div id="thinking" class="thinking">
         <div class="spinner"></div>正在处理中，请稍候...
       </div>

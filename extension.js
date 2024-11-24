@@ -2,6 +2,7 @@ const vscode = require('vscode');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+let userLanguage = "en";
 
 let typingTimer;
 let left_selector = new vscode.Position(0, 0);
@@ -31,6 +32,7 @@ let decorationType = vscode.window.createTextEditorDecorationType({
 
 async function activate(context) {
   activeEditor = vscode.window.activeTextEditor;
+  userLanguage = vscode.env.language;
   activeContext = context;
   config = vscode.workspace.getConfiguration('novel-style-revision')
   writingStyle = config.get('style');
@@ -436,7 +438,16 @@ class NovelStyleRevisionViewProvider {
     }
   }
   getWebviewContent(imagePath) {
-    const htmlPath = path.join(__dirname, 'index.html');
+    let htmlPath;
+    if (userLanguage === "zh-cn") {
+      htmlPath = path.join(__dirname, 'index.zh-cn.html');
+    }
+    else if (userLanguage === "ja") {
+      htmlPath = path.join(__dirname, 'index.ja-jp.html');
+    }
+    else{
+      htmlPath = path.join(__dirname, 'index.en-us.html');
+    } 
     let htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
     // 替换 HTML 内容中的占位符

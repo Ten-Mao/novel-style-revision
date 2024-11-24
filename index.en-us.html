@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modified Text Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik:wght@500&display=swap" rel="stylesheet">
+  <style>
+    /* 全局样式重置 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Rubik', sans-serif;
+      background: linear-gradient(135deg, #000428, #004e92); /* 星空背景渐变 */
+      display: flex;
+      justify-content: flex-start; /* 改为靠左对齐 */
+      height: 100vh;
+      padding: 20px;
+      color: #fff; /* 白色文字 */
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 侧边栏样式 */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 60px; /* 默认宽度 */
+      background-color: #2d3a49;
+      transition: width 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: top;
+      align-items: center;
+      padding-top: 30px;
+    }
+
+    .sidebar:hover {
+      width: 150px; /* 鼠标悬停时展开 */
+    }
+    .sidebar-item {
+      padding-left: 15px;
+      width: 100%; /* 图标宽度为父容器宽度的50% */
+      height: 60px; /* 图标高度为父容器高度的50% */
+      transition: transform 0.3s ease;
+      display: flex;
+    }
+    .sidebar-icon{
+      width: 30px;
+      height: 30px;
+      transition: transform 0.3s ease;
+    }
+
+    /* 鼠标悬停时，图标的大小略微增大 */
+    .sidebar-item:hover .sidebar-icon {
+      transform: scale(1.2); /* 悬停时图标略微放大 */
+    }
+
+    /* 侧边栏图标文本样式 */
+    .sidebar-text {
+      font-size: 14px;
+      margin-left: 10px;
+      margin-top: 5px;
+      color: #fff;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar:hover .sidebar-text {
+      opacity: 1; /* 鼠标悬停时显示文本 */
+    }
+
+    .container {
+      margin-left: 60px; /* 调整容器的位置，避免被侧边栏遮挡 */
+      background: linear-gradient(135deg, #000000, #c0c0c0); /* 纯黑到银灰渐变 */
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      padding: 30px;
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s ease;
+      z-index: 10; /* 确保容器在星空背景之上 */
+      transition: margin-left 0.3s ease; /* 动画时长为 0.3 秒，使用 ease 曲线 */
+    }
+    /* 设置界面 */
+    .settings-content {
+      display: none; /* 默认隐藏设置 */
+      color: #fff;
+      text-align: center;
+    }
+
+    .run-content {
+      display: block; /* 默认显示 Run 内容 */
+      color: #fff;
+      text-align: center;
+    }
+    /* 其他样式保持不变 */
+    .title-image {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .title-image:hover {
+      transform: scale(1.05); /* 鼠标悬停时的动态效果 */
+    }
+
+    .modified-text {
+      background: linear-gradient(135deg, #313030, #686868); /* 深到浅的渐变 */
+      color: #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 1rem;
+      line-height: 1.5;
+      border: 1px solid #444;
+      width: 100%;
+      max-height: 100%;
+      overflow-y: auto;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .apply-button:disabled {
+      background: linear-gradient(135deg, #b0bec5, #cfd8dc); /* 灰色渐变 */
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.5;
+    }
+
+    .apply-button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #5c6bc0, #3f4c89); /* 渐变背景 */
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: bold;
+      transition: background-color 0.3s, transform 0.2s;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* 按钮阴影 */
+    }
+
+    .apply-button:hover {
+      background: linear-gradient(135deg, #3f4c89, #5c6bc0); /* 反向渐变 */
+      transform: scale(1.1);  
+    }
+
+    .apply-button:disabled:hover {
+      background: linear-gradient(135deg, #b0bec5, #cfd8dc); /* 禁用时禁止悬停背景色变化 */
+      transform: none; /* 禁用时禁止缩放效果 */
+    }
+
+    .apply-button:focus {
+      outline: none;
+    }
+
+    .thinking {
+      font-size: 16px;
+      color: #165f73;
+      margin-top: 20px;
+      display: none;
+      position: relative;
+      text-align: center;
+    }
+
+    .thinking .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #165f73;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    .sidebar:hover ~ .container {
+      margin-left: 150px; /* 鼠标悬停时容器位置 */
+    }
+    /* 整体设置容器 */
+    .settings-container {
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff; /* 背景白色 */
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 100%; /* 宽度自适应 */
+      width: 80%; /* 宽度为容器的80% */
+    }
+
+    /* 标题样式 */
+    .settings-title {
+      text-align: center;
+      color: #aeacac; /* 更深的黑色字体 */
+      font-size: 2rem; /* 增大字体 */
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    /* 每一组设置项容器 */
+    .settings-group {
+      margin-left: -50px;
+      margin-bottom: 20px;
+      width: 120%;
+      display: flex;
+      align-items: center; /* 居中对齐 */
+      justify-content: flex-start; /* 左对齐 */
+    }
+
+    /* 标签样式 */
+    .settings-label {
+      font-size: 1.2rem; /* 稍微增大字体 */
+      color: #abaaaa; /* 深灰色 */
+      margin-right: 20px; /* 右侧间距 */
+      flex: 0 0 30%; /* 固定宽度 */
+      text-align: right; /* 右对齐 */
+    }
+
+    /* 输入框样式 */
+    .settings-input {
+      width: 100%;
+      padding: 12px; /* 增加内边距 */
+      border: 1px solid #ccc; /* 浅灰色边框 */
+      border-radius: 8px;
+      font-size: 1.1rem; /* 增大字体 */
+      background-color: #f9f9f9; /* 淡灰色背景 */
+      color: #333;
+      transition: border-color 0.3s ease;
+      flex: 0 0 65%; /* 输入框占 65% 宽度 */
+    }
+
+    /* 输入框获得焦点时的效果 */
+    .settings-input:focus {
+      border-color: #444; /* 深灰色 */
+      outline: none;
+    }
+
+    /* 复选框样式 */
+    .settings-checkbox {
+      transform: scale(1.3); /* 增大复选框 */
+    }
+
+    /* 按钮样式 */
+    .apply-button {
+      width: 100%;
+      padding: 14px 0; /* 增大按钮 */
+      background: #333; /* 深灰色背景 */
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2rem; /* 增大按钮文字 */
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-top: 20px;
+    }
+
+    /* 按钮悬停效果 */
+    .apply-button:hover {
+      background-color: #555; /* 中灰色 */
+      transform: scale(1.05);
+    }
+
+    /* 按钮焦点时的效果 */
+    .apply-button:focus {
+      outline: none;
+    }
+
+
+
+
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      .modified-text {
+        padding: 15px;
+        max-height: 100%;
+      }
+
+      .apply-button {
+        padding: 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <!-- 侧边栏图标 -->
+    <div id="SettingsButton" class="sidebar-item" title="Settings">
+      <img src="https://img.icons8.com/ios/50/ffffff/settings.png" class="sidebar-icon" alt="Settings">
+      <span class="sidebar-text">Settings</span>
+    </div>
+    <div id="RunButton" class="sidebar-item" title="Run">
+      <img src="https://img.icons8.com/ios/50/ffffff/brain.png" class="sidebar-icon" alt="Run">
+      <span class="sidebar-text">LLM Think</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="runContent" class="run-content">
+      <img src="{{IMAGE_PATH}}" alt="Novel Style Revision" class="title-image">
+      <div id="modifiedText" class="modified-text"></div>
+      <button class="apply-button" id="applyButton" disabled title="请使用ctrl+tab发起一次生成请求,或者开启自动跟随生成选项获得生成文本">apply changes</button>
+      <div id="thinking" class="thinking">
+        <div class="spinner"></div>LLM is thinking...
+      </div>
+    </div>
+    <div id="settingsContent" class="settings-content">
+      <h2 class="settings-title">Settings</h2>
+    
+      <div class="settings-group">
+        <label for="styleInput" class="settings-label">novel style:</label>
+        <input type="text" id="styleInput" value="村上春树" class="settings-input">
+      </div>
+    
+      <div class="settings-group">
+        <label for="languageInput" class="settings-label">novel language:</label>
+        <input type="text" id="languageInput" value="简体中文" class="settings-input">
+      </div>
+    
+      <div class="settings-group">
+        <label for="colorInput" class="settings-label">select area color:</label>
+        <input type="color" id="colorInput" value="#ff0000" class="settings-input">
+      </div>
+    
+      <div class="settings-group">
+        <label for="followingThinkInput" class="settings-label">enable following think:</label>
+        <input type="checkbox" id="followingThinkInput" checked class="settings-checkbox">
+      </div>
+    
+      <div class="settings-group">
+        <label for="intervalInput" class="settings-label">following think interval（ms）:</label>
+        <input type="number" id="intervalInput" value="3000" class="settings-input">
+      </div>
+    
+      <div class="settings-group">
+        <label for="urlInput" class="settings-label">API baseURL:</label>
+        <input type="url" id="urlInput" value="https://open.bigmodel.cn/api/paas/v4/chat/completions" class="settings-input">
+      </div>
+    
+      <div class="settings-group">
+        <label for="apiKeyInput" class="settings-label">API Key:</label>
+        <input type="text" id="apiKeyInput" value="" class="settings-input">
+      </div>
+    
+      <button id="applySettingsButton" class="apply-button">apply settings</button>
+    </div>
+    
+  </div>
+
+  <script>
+    const vscode = acquireVsCodeApi();
+
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('mouseenter', function() {
+        const text = this.querySelector('.sidebar-text');
+        text.style.opacity = '1'; // 鼠标悬停时显示文本
+      });
+
+      item.addEventListener('mouseleave', function() {
+        const text = this.querySelector('.sidebar-text');
+        text.style.opacity = '0'; // 鼠标离开时隐藏文本
+      });
+    });
+
+    document.getElementById('applyButton').addEventListener('click', function() {
+      if(this.disabled) {
+        return;
+      }
+      applyText();
+    });
+
+    const settingsButton = document.getElementById("SettingsButton");
+    const runButton = document.getElementById("RunButton"); 
+    const runContent = document.getElementById("runContent"); 
+    const settingsContent = document.getElementById("settingsContent");
+
+    settingsButton.addEventListener("click", function() { 
+      settingsButton.classList.add("active"); 
+      runButton.classList.remove("active"); 
+      runContent.style.display = "none"; 
+      settingsContent.style.display = "block"; 
+    });
+    runButton.addEventListener("click", function() {
+      runButton.classList.add("active");
+      settingsButton.classList.remove("active");
+      runContent.style.display = "block";
+      settingsContent.style.display = "none";
+    });
+
+    function applyText() {
+      vscode.postMessage({ command: 'apply' });
+    }
+
+    window.addEventListener('message', event => {
+      const message = event.data;
+      const modifiedTextElement = document.getElementById('modifiedText');
+      const applyButton = document.querySelector('.apply-button');
+      if(message.hideThinking) {
+        modifiedTextElement.innerText = '';
+        applyButton.style.display = 'block';
+        document.getElementById('applyButton').disabled = true;
+        document.getElementById('thinking').style.display = 'none';
+      }
+      if(message.modifiedText && message.modifiedText.length > 0) {
+        modifiedTextElement.innerText = message.modifiedText;
+        applyButton.style.display = 'block';
+        document.getElementById('applyButton').disabled = false;
+        document.getElementById('thinking').style.display = 'none';
+      }
+      if(message.showThinking) {
+        document.getElementById('applyButton').disabled = true;
+        document.getElementById('thinking').style.display = 'block';
+      }
+      if(message.applySettings) {
+        document.getElementById('styleInput').value = message.style;
+        document.getElementById('languageInput').value = message.language;
+        document.getElementById('colorInput').value = message.selectColor;
+        document.getElementById('followingThinkInput').checked = message.followingThink;
+        document.getElementById('intervalInput').value = message.followingThinkInterval;
+        document.getElementById('urlInput').value = message.baseURL;
+        document.getElementById('apiKeyInput').value = message.apiKey;
+      }
+    });
+    function getFormData() {
+      const data = {
+        style: document.getElementById('styleInput').value,
+        language: document.getElementById('languageInput').value,
+        selectColor: document.getElementById('colorInput').value,
+        followingThink: document.getElementById('followingThinkInput').checked,
+        followingThinkInterval: document.getElementById('intervalInput').value,
+        baseURL: document.getElementById('urlInput').value,
+        apiKey: document.getElementById('apiKeyInput').value,
+      };
+      return data;
+    }
+
+    document.getElementById('applySettingsButton').addEventListener('click', async function() {
+      const formData = await getFormData();
+      vscode.postMessage({ command: 'applySettings', data: formData });
+    });
+    vscode.postMessage({ command: 'ready' });
+
+  </script>
+  
+</body>
+</html>
